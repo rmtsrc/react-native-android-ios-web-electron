@@ -45,6 +45,7 @@ Build Android APK:
 
 Build Electron desktop app:
 
+    # Outputs to: `dist/mac`
     yarn electron:build
 
 Build Web app:
