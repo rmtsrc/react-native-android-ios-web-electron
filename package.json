@@ -1,19 +1,27 @@
 {
+  "name": "react_native_android_ios_web_electron",
+  "version": "0.0.1",
+  "license": "MIT",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
+    "build": "source .env && yarn clean && expo export --public-url $EXPO_PUBLIC_URL && mkdir -p dist-public && rm -Rf dist-public/* && cp -R dist/* dist-public/",
+    "serve:dist": "mkdir -p dist-public && (yarn serve dist-public > /dev/null 2>&1 &) && ngrok http 5000",
+    "clean": "rm -Rf dist web-build",
     "android": "expo start --android",
+    "android:build": "source .env && yarn build && turtle build:android --keystore-path keystore.jks --keystore-alias $EXPO_ANDROID_KEYSTORE_ALIAS --mode release --type apk --public-url $EXPO_PUBLIC_URL/android-index.json",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "web:build": "yarn expo-optimize && expo build:web",
     "electron": "expo-electron start",
+    "electron:build": "NODE_ENV=production electron-webpack && NODE_ENV=production electron-builder --dir -c.compression=store -c.mac.identity=null",
     "eject": "expo eject"
   },
   "dependencies": {
-    "electron": "^6.0.12",
     "expo": "~37.0.3",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-37.0.0.tar.gz",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-37.0.1.tar.gz",
     "react-native-screens": "~2.2.0",
     "react-native-web": "~0.11.7"
   },
@@ -24,7 +32,36 @@
     "@types/react": "~16.9.23",
     "@types/react-native": "~0.61.17",
     "babel-preset-expo": "~8.1.0",
+    "electron": "^8.2.1",
+    "electron-builder": "^22.4.1",
+    "expo-optimize": "^0.1.16",
+    "serve": "^11.3.0",
+    "sharp-cli": "^1.13.1",
+    "turtle-cli": "^0.14.5",
     "typescript": "~3.8.3"
   },
-  "private": true
+  "build": {
+    "appId": "com.yourcompany.react_native_android_ios_web_electron",
+    "extraMetadata": {
+      "main": "main.js"
+    },
+    "files": [
+      {
+        "from": "dist/main/",
+        "to": "./",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "dist/renderer",
+        "to": "./",
+        "filter": [
+          "**/*"
+        ]
+      },
+      "package.json",
+      "**/node_modules/**/*"
+    ]
+  }
 }
