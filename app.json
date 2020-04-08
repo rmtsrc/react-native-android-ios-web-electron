@@ -1,12 +1,15 @@
 {
   "expo": {
-    "name": "ReactNativeExpoTest",
-    "slug": "ReactNativeExpoTest",
+    "name": "react_native_android_ios_web_electron",
+    "slug": "react_native_android_ios_web_electron",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
+    "android": {
+      "package": "com.yourcompany.react_native_android_ios_web_electron"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
