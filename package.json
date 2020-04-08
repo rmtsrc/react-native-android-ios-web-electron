@@ -5,16 +5,17 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "build": "source .env && yarn clean && expo export --public-url $EXPO_PUBLIC_URL && mkdir -p dist-public && rm -Rf dist-public/* && cp -R dist/* dist-public/",
+    "build": "source .env && NODE_ENV=production && yarn clean && expo export --public-url $EXPO_PUBLIC_URL && mkdir -p dist-public && rm -Rf dist-public/* && cp -R dist/* dist-public/",
     "serve:dist": "mkdir -p dist-public && (yarn serve dist-public > /dev/null 2>&1 &) && ngrok http 5000",
     "clean": "rm -Rf dist web-build",
     "android": "expo start --android",
-    "android:build": "source .env && yarn build && turtle build:android --keystore-path keystore.jks --keystore-alias $EXPO_ANDROID_KEYSTORE_ALIAS --mode release --type apk --public-url $EXPO_PUBLIC_URL/android-index.json",
+    "android:build": "source .env && NODE_ENV=production && yarn build && turtle build:android --keystore-path keystore.jks --keystore-alias $EXPO_ANDROID_KEYSTORE_ALIAS --mode release --type apk --public-url $EXPO_PUBLIC_URL/android-index.json",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "web:build": "yarn expo-optimize && expo build:web",
+    "web:build": "NODE_ENV=production && yarn expo-optimize && expo build:web",
     "electron": "expo-electron start",
-    "electron:build": "NODE_ENV=production electron-webpack && NODE_ENV=production electron-builder --dir -c.compression=store -c.mac.identity=null",
+    "electron:build": "NODE_ENV=production && electron-webpack && electron-builder --dir -c.compression=store -c.mac.identity=null",
+    "electron:build:installer": "NODE_ENV=production && electron-webpack && electron-builder -c.compression=store -c.mac.identity=null",
     "eject": "expo eject"
   },
   "dependencies": {
