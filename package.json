@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
-    "@expo/electron-adapter": "^0.0.0-alpha.40",
+    "@expo/electron-adapter": "^0.0.0-alpha.42",
     "@expo/webpack-config": "^0.11.18",
     "@types/react": "~16.9.23",
     "@types/react-native": "~0.61.17",
@@ -39,7 +39,10 @@
     "serve": "^11.3.0",
     "sharp-cli": "^1.13.1",
     "turtle-cli": "^0.14.5",
-    "typescript": "~3.8.3"
+    "typescript": "~3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   },
   "build": {
     "appId": "com.yourcompany.react_native_android_ios_web_electron",
