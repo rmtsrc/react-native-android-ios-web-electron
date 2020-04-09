@@ -1,8 +1,10 @@
 'use strict';
 
-import { BrowserWindow, app } from 'electron';
+import { BrowserWindow, app, dialog } from 'electron';
 import * as path from 'path';
 import { format as formatUrl } from 'url';
+import log from 'electron-log';
+import { autoUpdater } from 'electron-updater';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -21,6 +23,7 @@ function createMainWindow() {
   if (isDevelopment) {
     browserWindow.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
   } else {
+    // Code could also be updated via a service worker
     browserWindow.loadURL(
       formatUrl({
         pathname: path.join(__dirname, 'index.html'),
@@ -62,4 +65,33 @@ app.on('activate', () => {
 // create main BrowserWindow when electron is ready
 app.on('ready', () => {
   mainWindow = createMainWindow();
+  autoUpdater.checkForUpdatesAndNotify();
+  setInterval(autoUpdater.checkForUpdatesAndNotify, 60 * 60 * 1000);
+});
+
+autoUpdater.on('checking-for-update', () => {
+  log.info(`${app.getVersion()}. Checking for update...`);
+});
+autoUpdater.on('update-available', (info) => {
+  log.info('Update available.');
+});
+autoUpdater.on('update-not-available', (info) => {
+  log.info('Update not available.');
+});
+autoUpdater.on('error', (err) => {
+  log.info(`Error in auto-updater. ${err}`);
+});
+autoUpdater.on('download-progress', (progressObj) => {
+  log.info(
+    `Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}% (${progressObj.transferred}/${progressObj.total})`
+  );
+});
+autoUpdater.on('update-downloaded', async (ev, info) => {
+  const { response } = await dialog.showMessageBox({
+    type: 'info',
+    buttons: ['Update', 'Later'],
+    title: 'Application Update',
+    message: 'A new version has been downloaded. Would you like to apply the update?',
+  });
+  if (response === 0) autoUpdater.quitAndInstall();
 });

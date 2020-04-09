@@ -5,17 +5,18 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "build": "source .env && NODE_ENV=production && yarn clean && expo export --public-url $EXPO_PUBLIC_URL && mkdir -p dist-public && rm -Rf dist-public/* && cp -R dist/* dist-public/",
-    "serve:dist": "mkdir -p dist-public && (yarn serve dist-public > /dev/null 2>&1 &) && ngrok http 5000",
-    "clean": "rm -Rf dist web-build",
+    "build": "source .env && NODE_ENV=production && yarn clean && expo export --public-url $EXPO_APP_PUBLIC_URL && mkdir -p dist-public && rm -Rf dist-public/* && cp -R dist/* dist-public/",
+    "serve:dist": "mkdir -p dist-public && (yarn serve -l 5201 dist-public > /dev/null 2>&1 &) && ngrok http 5201",
+    "clean": "rm -Rf dist",
     "android": "expo start --android",
-    "android:build": "source .env && NODE_ENV=production && yarn build && turtle build:android --keystore-path keystore.jks --keystore-alias $EXPO_ANDROID_KEYSTORE_ALIAS --mode release --type apk --public-url $EXPO_PUBLIC_URL/android-index.json",
+    "android:build": "source .env && NODE_ENV=production && yarn build && turtle build:android --keystore-path keystore.jks --keystore-alias $EXPO_ANDROID_KEYSTORE_ALIAS --mode release --type apk --public-url $EXPO_APP_PUBLIC_URL/android-index.json",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "web:build": "NODE_ENV=production && yarn expo-optimize && expo build:web",
     "electron": "expo-electron start",
-    "electron:build": "NODE_ENV=production && electron-webpack && electron-builder --dir -c.compression=store -c.mac.identity=null",
-    "electron:build:installer": "NODE_ENV=production && electron-webpack && electron-builder -c.compression=store -c.mac.identity=null",
+    "electron:build": "yarn electron:build:installer --dir",
+    "electron:build:packed": "source .env && NODE_ENV=production && yarn clean && electron-webpack && electron-builder",
+    "serve:electron:dist": "mkdir -p dist-electron && (yarn serve -l 5202 dist-electron > /dev/null 2>&1 &) && ngrok http 5202",
     "eject": "expo eject"
   },
   "dependencies": {
@@ -35,6 +36,8 @@
     "babel-preset-expo": "~8.1.0",
     "electron": "^8.2.1",
     "electron-builder": "^22.4.1",
+    "electron-log": "^4.1.1",
+    "electron-updater": "^4.2.5",
     "expo-optimize": "^0.1.16",
     "serve": "^11.3.0",
     "sharp-cli": "^1.13.1",
@@ -45,9 +48,19 @@
     "webpack-dev-server": "^3.10.3"
   },
   "build": {
-    "appId": "com.yourcompany.react_native_android_ios_web_electron",
+    "appId": "com.yourcompany.${name}",
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "${env.EXPO_ELECTRON_PUBLIC_URL}"
+      }
+    ],
     "extraMetadata": {
       "main": "main.js"
+    },
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist-electron"
     },
     "files": [
       {
